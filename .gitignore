@@ -1,0 +1,35 @@
+# --- Private application material — MUST NEVER be published ---
+_bewerbung/
+CLAUDE.md
+.claude/
+*.pptx
+*.pdf
+*Bewerbung*
+*Lebenslauf*
+*CV*
+*Anschreiben*
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+
+# --- Node / frontend ---
+node_modules/
+dist/
+.vite/
+*.local
+
+# --- Data / runtime ---
+pgdata/
+*.log
+*.sqlite
+
+# --- OS / editor ---
+.DS_Store
+.idea/
+.vscode/
+*.swp
