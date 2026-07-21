@@ -1,0 +1,26 @@
+# Production deployment (e.g. a small cloud VM).
+# Usage:  docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+#
+# Only the dashboard (80) and the backend API/WebSocket (8000) are published.
+# MQTT (1883) and PostgreSQL (5432) stay on the internal network — not exposed.
+
+services:
+  mosquitto:
+    restart: unless-stopped
+    ports: []          # do not publish MQTT to the internet
+
+  db:
+    restart: unless-stopped
+
+  backend:
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+
+  emulator:
+    restart: unless-stopped
+
+  frontend:
+    restart: unless-stopped
+    ports:
+      - "80:80"
