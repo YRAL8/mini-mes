@@ -54,15 +54,15 @@ function Bottle({ fillPct, color }) {
 function StatBlock({ eyebrow, value, unit, accent }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 10, letterSpacing: "0.12em", color: "#8A939C", textTransform: "uppercase" }}>
+      <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 19, letterSpacing: "0.12em", color: "#8A939C", textTransform: "uppercase" }}>
         {eyebrow}
       </span>
       <span style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
-        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 28, fontWeight: 600, color: accent || "#EDEFF1", lineHeight: 1 }}>
+        <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 60, fontWeight: 600, color: accent || "#EDEFF1", lineHeight: 1 }}>
           {value}
         </span>
         {unit && (
-          <span style={{ fontSize: 12, color: "#8A939C", fontFamily: "'IBM Plex Mono', monospace" }}>{unit}</span>
+          <span style={{ fontSize: 22, color: "#8A939C", fontFamily: "'IBM Plex Mono', monospace" }}>{unit}</span>
         )}
       </span>
     </div>
@@ -75,8 +75,8 @@ function InventoryBar({ label, current, max, color, unit }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-        <span style={{ fontSize: 12, color: "#8A939C", fontFamily: "'IBM Plex Mono', monospace" }}>{label}</span>
-        <span style={{ fontSize: 12, fontFamily: "'IBM Plex Mono', monospace", color: low ? "#E15B4F" : "#EDEFF1" }}>
+        <span style={{ fontSize: 22, color: "#8A939C", fontFamily: "'IBM Plex Mono', monospace" }}>{label}</span>
+        <span style={{ fontSize: 22, fontFamily: "'IBM Plex Mono', monospace", color: low ? "#E15B4F" : "#EDEFF1" }}>
           {Math.round(current).toLocaleString("de-DE")} {unit}
         </span>
       </div>
@@ -148,30 +148,30 @@ export default function App() {
       `}</style>
 
       {/* Header */}
-      <div style={{ maxWidth: 880, margin: "0 auto 24px", display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 12 }}>
+      <div style={{ maxWidth: 1240, margin: "0 auto 24px", display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: 12 }}>
         <div>
-          <div style={{ fontSize: 11, letterSpacing: "0.16em", color: "#8A939C", fontFamily: "'IBM Plex Mono', monospace", marginBottom: 6 }}>
+          <div style={{ fontSize: 19, letterSpacing: "0.16em", color: "#8A939C", fontFamily: "'IBM Plex Mono', monospace", marginBottom: 6 }}>
             MINI-MES · LINIE 1 · HEHLEN
           </div>
-          <h1 style={{ margin: 0, fontSize: 26, fontWeight: 700, letterSpacing: "-0.01em" }}>
+          <h1 style={{ margin: 0, fontSize: 52, fontWeight: 700, letterSpacing: "-0.01em" }}>
             Produktions- &amp; Lager-Dashboard
           </h1>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, color: connected ? "#4FB286" : "#E15B4F" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: "'IBM Plex Mono', monospace", fontSize: 22, color: connected ? "#4FB286" : "#E15B4F" }}>
           <span style={{ width: 8, height: 8, borderRadius: "50%", background: connected ? "#4FB286" : "#E15B4F" }} />
           {connected ? "LIVE · WebSocket" : "getrennt — verbinde…"}
         </div>
       </div>
 
-      <div style={{ maxWidth: 880, margin: "0 auto", display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 16 }}>
+      <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gridTemplateColumns: "1.3fr 1fr", gap: 16 }}>
         {/* Machine status / MES card */}
-        <div style={{ background: "#1D2329", border: "1px solid #2A3138", borderRadius: 12, padding: 24, display: "flex", flexDirection: "column", gap: 20 }}>
+        <div style={{ background: "#1D2329", border: "1px solid #2A3138", borderRadius: 12, padding: 30, display: "flex", flexDirection: "column", gap: 24 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <span style={{ width: 10, height: 10, borderRadius: "50%", background: meta.color, boxShadow: `0 0 0 6px ${meta.glow}` }} />
-            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 14, fontWeight: 600, color: meta.color, letterSpacing: "0.04em" }}>
+            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 24, fontWeight: 600, color: meta.color, letterSpacing: "0.04em" }}>
               {meta.label}
             </span>
-            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 12, color: "#8A939C", marginLeft: "auto" }}>Maschine #1</span>
+            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 22, color: "#8A939C", marginLeft: "auto" }}>Maschine #1</span>
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
@@ -183,26 +183,26 @@ export default function App() {
           {/* KI module: downtime risk */}
           <div style={{ display: "flex", alignItems: "center", gap: 12, borderTop: "1px solid #2A3138", paddingTop: 14 }}>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 10, letterSpacing: "0.12em", color: "#8A939C", fontFamily: "'IBM Plex Mono', monospace", textTransform: "uppercase", marginBottom: 6 }}>
+              <div style={{ fontSize: 19, letterSpacing: "0.12em", color: "#8A939C", fontFamily: "'IBM Plex Mono', monospace", textTransform: "uppercase", marginBottom: 6 }}>
                 KI · Störungsrisiko
               </div>
               <div style={{ height: 6, background: "#2A3138", borderRadius: 3, overflow: "hidden" }}>
                 <div style={{ height: "100%", width: `${Math.min(100, risk)}%`, background: riskColor, transition: "width 0.6s ease, background 0.4s ease" }} />
               </div>
             </div>
-            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 18, fontWeight: 600, color: riskColor }}>{risk.toFixed(0)}%</span>
+            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 33, fontWeight: 600, color: riskColor }}>{risk.toFixed(0)}%</span>
           </div>
 
           <div>
-            <div style={{ fontSize: 10, letterSpacing: "0.12em", color: "#8A939C", fontFamily: "'IBM Plex Mono', monospace", marginBottom: 8, textTransform: "uppercase" }}>
+            <div style={{ fontSize: 19, letterSpacing: "0.12em", color: "#8A939C", fontFamily: "'IBM Plex Mono', monospace", marginBottom: 8, textTransform: "uppercase" }}>
               Ereignisprotokoll
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
               {(snap.events || []).length === 0 && (
-                <div style={{ fontSize: 12, fontFamily: "'IBM Plex Mono', monospace", color: "#5C646C" }}>— warte auf Ereignisse —</div>
+                <div style={{ fontSize: 22, fontFamily: "'IBM Plex Mono', monospace", color: "#5C646C" }}>— warte auf Ereignisse —</div>
               )}
               {(snap.events || []).map((e, i) => (
-                <div key={i} style={{ display: "flex", gap: 10, fontSize: 12, fontFamily: "'IBM Plex Mono', monospace", color: i === 0 ? "#EDEFF1" : "#5C646C" }}>
+                <div key={i} style={{ display: "flex", gap: 10, fontSize: 22, fontFamily: "'IBM Plex Mono', monospace", color: i === 0 ? "#EDEFF1" : "#5C646C" }}>
                   <span>{fmtTime(e.ts)}</span>
                   <span>{e.message}</span>
                 </div>
@@ -212,9 +212,9 @@ export default function App() {
         </div>
 
         {/* Warehouse / ERP card */}
-        <div style={{ background: "#1D2329", border: "1px solid #2A3138", borderRadius: 12, padding: 24, display: "flex", flexDirection: "column", gap: 20 }}>
+        <div style={{ background: "#1D2329", border: "1px solid #2A3138", borderRadius: 12, padding: 30, display: "flex", flexDirection: "column", gap: 24 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span style={{ fontSize: 10, letterSpacing: "0.12em", color: "#8A939C", fontFamily: "'IBM Plex Mono', monospace", textTransform: "uppercase" }}>
+            <span style={{ fontSize: 19, letterSpacing: "0.12em", color: "#8A939C", fontFamily: "'IBM Plex Mono', monospace", textTransform: "uppercase" }}>
               ERP · Lagerbestand
             </span>
             <Bottle fillPct={((snap.finished_goods || 0) / (snap.finished_capacity || 1)) * 100} color="#E8A33D" />
@@ -224,17 +224,17 @@ export default function App() {
           <InventoryBar label="Fertigware" current={snap.finished_goods || 0} max={snap.finished_capacity || 3000} color="#E8A33D" unit="Stk" />
 
           <div style={{ borderTop: "1px solid #2A3138", paddingTop: 14, display: "flex", flexDirection: "column", gap: 4 }}>
-            <span style={{ fontSize: 11, color: "#8A939C", fontFamily: "'IBM Plex Mono', monospace" }}>
+            <span style={{ fontSize: 19, color: "#8A939C", fontFamily: "'IBM Plex Mono', monospace" }}>
               Reichweite Rohmaterial bei aktueller Rate
             </span>
-            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 18, fontWeight: 600 }}>
+            <span style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 33, fontWeight: 600 }}>
               {snap.reichweite_min == null ? "—" : `~ ${Math.round(snap.reichweite_min)} Min`}
             </span>
           </div>
         </div>
       </div>
 
-      <div style={{ maxWidth: 880, margin: "18px auto 0", fontSize: 11, color: "#5C646C", fontFamily: "'IBM Plex Mono', monospace", lineHeight: 1.6 }}>
+      <div style={{ maxWidth: 1240, margin: "18px auto 0", fontSize: 19, color: "#5C646C", fontFamily: "'IBM Plex Mono', monospace", lineHeight: 1.6 }}>
         Live-Daten aus der Kette Maschine (OT) → MQTT → FastAPI → PostgreSQL → Dashboard.
         MES-Kennzahlen links, ERP-Lagerbestand rechts — orchestriert über Docker Compose.
       </div>
