@@ -74,7 +74,9 @@ def handle_line(line: str, state: dict) -> None:
         rec = json.loads(line)
     except json.JSONDecodeError:
         return
-    if rec.get("logger") != "http.log.access":
+    # An unnamed `log` block in the Caddyfile gets an auto name (log0, log1, ...
+    # appended to the logger), so match the prefix rather than the exact string.
+    if not rec.get("logger", "").startswith("http.log.access"):
         return
 
     req = rec.get("request", {})
