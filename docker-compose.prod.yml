@@ -3,12 +3,15 @@
 #   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 #
 # Note the explicit -f list: it excludes docker-compose.override.yml, so none of
-# the development ports come along. Port 80 is the only port published. The API
-# and the WebSocket are served through the dashboard's nginx
-# (see frontend/nginx.conf), so FastAPI is never exposed directly, and MQTT and
-# PostgreSQL stay on the internal Docker network.
+# the development ports come along. Caddy is the only published service — it
+# terminates HTTPS (Let's Encrypt, via the free "<ip>.sslip.io" domain trick,
+# since a bare IP cannot get a real certificate) on 80/443 and reverse-proxies
+# to the dashboard's nginx, which in turn proxies /api/, /ws, /docs and
+# /health to the backend over the internal network. FastAPI, MQTT and
+# PostgreSQL are never exposed directly.
 #
-# Requires a .env file next to this one holding POSTGRES_PASSWORD.
+# Requires a .env file next to this one holding POSTGRES_PASSWORD and
+# CADDY_DOMAIN (e.g. CADDY_DOMAIN=167-233-163-166.sslip.io).
 # A published Docker port bypasses ufw, so the host firewall is not what keeps
 # the other ports closed — the provider-side cloud firewall is.
 
@@ -31,10 +34,27 @@ services:
 
   frontend:
     restart: unless-stopped
-    ports:
-      - "80:80"
     logging:
       driver: json-file
       options:
         max-size: "10m"
         max-file: "5"
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      CADDY_DOMAIN: ${CADDY_DOMAIN:?set CADDY_DOMAIN in .env, e.g. 167-233-163-166.sslip.io}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - frontend
+
+volumes:
+  caddy_data:
+  caddy_config:

@@ -1,0 +1,9 @@
+# Caddy fronts the stack: automatic HTTPS via Let's Encrypt, no domain
+# purchase needed. sslip.io resolves "<ip-with-dashes>.sslip.io" straight back
+# to that IP, and Let's Encrypt only issues certificates for domain names, not
+# bare IPs — this satisfies that requirement for free.
+#
+# CADDY_DOMAIN is set in .env on the server (see docker-compose.prod.yml).
+{$CADDY_DOMAIN} {
+	reverse_proxy frontend:80
+}
