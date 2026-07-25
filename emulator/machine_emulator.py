@@ -27,16 +27,21 @@ IDEAL_CYCLE_MS = float(os.getenv("IDEAL_CYCLE_MS", "333"))
 TOPIC_TELEMETRY = f"mini-mes/{MACHINE_ID}/telemetry"
 TOPIC_EVENTS = f"mini-mes/{MACHINE_ID}/events"
 
-# State-transition probabilities per tick (deliberately lively for a demo).
-P_RUN_TO_ERROR = 0.015
-P_RUN_TO_IDLE = 0.05
-P_IDLE_TO_RUN = 0.35
-P_ERROR_TO_RUN = 0.20
+# State-transition probabilities per tick. Tuned so the line behaves like a real
+# one: a short stop roughly every two minutes, a fault every few minutes, each
+# lasting long enough to matter. Availability settles around 87 %.
+P_RUN_TO_ERROR = 0.004
+P_RUN_TO_IDLE = 0.008
+P_IDLE_TO_RUN = 0.10
+P_ERROR_TO_RUN = 0.06
 REJECT_RATE = 0.02  # share of produced bottles that are defective
 
+# The emulator is the OT side and knows nothing about warehouse levels, so its
+# idle text stays neutral. The material-shortage message ("Warten auf Nachschub")
+# is booked by the ERP module in the backend, which does know the real stock.
 EVENT_TEXT = {
     ("running", "error"): ("error", "Störung erkannt — Linie gestoppt"),
-    ("running", "idle"): ("warn", "Leerlauf — Warten auf Nachschub"),
+    ("running", "idle"): ("warn", "Kurzstillstand — Linie im Leerlauf"),
     ("idle", "running"): ("info", "Linie wieder in Betrieb"),
     ("error", "running"): ("info", "Störung behoben — Produktion läuft"),
 }
