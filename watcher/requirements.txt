@@ -1,0 +1,2 @@
+requests==2.32.3
+geoip2fast==1.2.2

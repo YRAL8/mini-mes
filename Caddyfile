@@ -6,4 +6,13 @@
 # CADDY_DOMAIN is set in .env on the server (see docker-compose.prod.yml).
 {$CADDY_DOMAIN} {
 	reverse_proxy frontend:80
+
+	# The watcher container tails this file to report new visitors to Telegram.
+	log {
+		output file /var/log/caddy/access.log {
+			roll_size 10mb
+			roll_keep 5
+		}
+		format json
+	}
 }

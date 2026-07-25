@@ -8,10 +8,12 @@
 # since a bare IP cannot get a real certificate) on 80/443 and reverse-proxies
 # to the dashboard's nginx, which in turn proxies /api/, /ws, /docs and
 # /health to the backend over the internal network. FastAPI, MQTT and
-# PostgreSQL are never exposed directly.
+# PostgreSQL are never exposed directly. The watcher container tails Caddy's
+# access log and reports new visitors to Telegram (see watcher/tracker.py).
 #
-# Requires a .env file next to this one holding POSTGRES_PASSWORD and
-# CADDY_DOMAIN (e.g. CADDY_DOMAIN=167-233-163-166.sslip.io).
+# Requires a .env file next to this one holding POSTGRES_PASSWORD, CADDY_DOMAIN
+# (e.g. CADDY_DOMAIN=167-233-163-166.sslip.io), TELEGRAM_BOT_TOKEN and
+# TELEGRAM_CHAT_ID.
 # A published Docker port bypasses ufw, so the host firewall is not what keeps
 # the other ports closed — the provider-side cloud firewall is.
 
@@ -52,9 +54,26 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
+      - caddy_logs:/var/log/caddy
     depends_on:
       - frontend
+
+  watcher:
+    build: ./watcher
+    restart: unless-stopped
+    environment:
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:?set TELEGRAM_BOT_TOKEN in .env}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID:?set TELEGRAM_CHAT_ID in .env}
+      # Comma-separated IPs to never notify about, e.g. your own workstation.
+      EXCLUDE_IPS: ${WATCHER_EXCLUDE_IPS:-}
+    volumes:
+      - caddy_logs:/var/log/caddy:ro
+      - watcher_state:/state
+    depends_on:
+      - caddy
 
 volumes:
   caddy_data:
   caddy_config:
+  caddy_logs:
+  watcher_state:
