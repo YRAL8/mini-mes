@@ -69,19 +69,24 @@ function StatBlock({ eyebrow, value, unit, accent }) {
   );
 }
 
-function InventoryBar({ label, current, max, color, unit }) {
+// The two stocks are critical at opposite ends of the same bar: raw material
+// when it runs out (line starves), finished goods when the buffer fills up
+// (line blocks). `critical` says which end deserves the alarm colour.
+function InventoryBar({ label, current, max, unit, critical = "empty" }) {
   const pct = Math.max(0, Math.min(100, (current / max) * 100));
-  const low = pct < 20;
+  const alarm = critical === "empty" ? pct < 20 : pct >= 98;
+  const warn = critical === "empty" ? pct < 35 : pct >= 85;
+  const barColor = alarm ? "#E15B4F" : warn ? "#E8A33D" : "#4FB286";
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
         <span style={{ fontSize: 22, color: "#8A939C", fontFamily: "'IBM Plex Mono', monospace" }}>{label}</span>
-        <span style={{ fontSize: 22, fontFamily: "'IBM Plex Mono', monospace", color: low ? "#E15B4F" : "#EDEFF1" }}>
+        <span style={{ fontSize: 22, fontFamily: "'IBM Plex Mono', monospace", color: alarm ? "#E15B4F" : "#EDEFF1" }}>
           {Math.round(current).toLocaleString("de-DE")} {unit}
         </span>
       </div>
       <div style={{ height: 6, background: "#2A3138", borderRadius: 3, overflow: "hidden" }}>
-        <div style={{ height: "100%", width: `${pct}%`, background: low ? "#E15B4F" : color, transition: "width 0.6s ease, background 0.4s ease" }} />
+        <div style={{ height: "100%", width: `${pct}%`, background: barColor, transition: "width 0.6s ease, background 0.4s ease" }} />
       </div>
     </div>
   );
@@ -180,6 +185,13 @@ export default function App() {
             <StatBlock eyebrow="Verfügbarkeit" value={(snap.availability || 0).toFixed(1)} unit="%" />
           </div>
 
+          {/* How that OEE came about — every factor traceable to the raw data. */}
+          <div style={{ fontFamily: "'IBM Plex Mono', monospace", fontSize: 19, color: "#8A939C", marginTop: -8 }}>
+            OEE = Verfügbarkeit {(snap.availability || 0).toFixed(1)} %
+            {" × "}Leistung {(snap.performance || 0).toFixed(1)} %
+            {" × "}Qualität {(snap.quality || 0).toFixed(1)} %
+          </div>
+
           {/* KI module: downtime risk */}
           <div style={{ display: "flex", alignItems: "center", gap: 12, borderTop: "1px solid #2A3138", paddingTop: 14 }}>
             <div style={{ flex: 1 }}>
@@ -220,8 +232,8 @@ export default function App() {
             <Bottle fillPct={((snap.finished_goods || 0) / (snap.finished_capacity || 1)) * 100} color="#E8A33D" />
           </div>
 
-          <InventoryBar label="Rohmaterial (Vorformlinge)" current={snap.raw_material || 0} max={snap.raw_start || 4000} color="#4FB286" unit="Stk" />
-          <InventoryBar label="Fertigware" current={snap.finished_goods || 0} max={snap.finished_capacity || 3000} color="#E8A33D" unit="Stk" />
+          <InventoryBar label="Rohmaterial (Vorformlinge)" current={snap.raw_material || 0} max={snap.raw_start || 4000} unit="Stk" critical="empty" />
+          <InventoryBar label="Fertigware" current={snap.finished_goods || 0} max={snap.finished_capacity || 3000} unit="Stk" critical="full" />
 
           <div style={{ borderTop: "1px solid #2A3138", paddingTop: 14, display: "flex", flexDirection: "column", gap: 4 }}>
             <span style={{ fontSize: 19, color: "#8A939C", fontFamily: "'IBM Plex Mono', monospace" }}>
