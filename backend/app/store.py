@@ -38,10 +38,10 @@ class LineStore:
                 "message": message,
             })
 
-    def process_telemetry(self, msg: dict) -> str | None:
+    def process_telemetry(self, msg: dict) -> list[tuple[str, str]]:
         """Fold one telemetry message into the running state.
 
-        Returns an ERP event message if a goods receipt was booked, else None.
+        Returns the ERP events booked for this tick as (level, message) pairs.
         """
         with self._lock:
             self.status = msg["status"]
@@ -59,9 +59,9 @@ class LineStore:
                 self.downtime_sec += 1.0
                 self._recent_produced.append(0)
 
-            erp_msg = self.warehouse.book_production(produced, rejects)
+            erp_events = self.warehouse.book_production(produced, rejects)
             self.updated_at = datetime.now(timezone.utc)
-            return erp_msg
+            return erp_events
 
     def snapshot(self) -> dict:
         with self._lock:

@@ -49,7 +49,7 @@ class MqttConsumer:
             self._handle_event(payload)
 
     def _handle_telemetry(self, payload: dict) -> None:
-        erp_msg = self.store.process_telemetry(payload)
+        erp_events = self.store.process_telemetry(payload)
         with SessionLocal() as session:
             session.add(Telemetry(
                 machine_id=payload.get("machine_id", MACHINE_ID),
@@ -58,9 +58,9 @@ class MqttConsumer:
                 rejects=int(payload.get("rejects", 0)),
                 cycle_ms=float(payload.get("cycle_ms", 0.0)),
             ))
-            if erp_msg:
-                self.store.add_event("info", erp_msg)
-                session.add(Event(machine_id=MACHINE_ID, level="info", message=erp_msg))
+            for level, msg in erp_events:
+                self.store.add_event(level, msg)
+                session.add(Event(machine_id=MACHINE_ID, level=level, message=msg))
             session.commit()
 
     def _handle_event(self, payload: dict) -> None:
