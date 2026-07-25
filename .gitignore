@@ -6,16 +6,16 @@
 *.pem
 secrets/
 
-# --- Private application material — MUST NEVER be published ---
-_bewerbung/
-CLAUDE.md
-.claude/
-*.pptx
+# --- Local working material — not part of the codebase ---
+# Underscore-prefixed folders hold local notes and drafts; documents and
+# presentations never belong in this repository.
+_*/
 *.pdf
-*Bewerbung*
-*Lebenslauf*
-*CV*
-*Anschreiben*
+*.pptx
+*.docx
+*.doc
+*.odt
+*.rtf
 
 # --- Python ---
 __pycache__/
