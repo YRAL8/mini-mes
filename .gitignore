@@ -1,5 +1,7 @@
 # --- Secrets — MUST NEVER be published ---
 .env
+.env.*
+!.env.example
 *token*
 *.token
 .hcloud*
