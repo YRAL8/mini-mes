@@ -1,16 +1,21 @@
+# Base definition of the whole chain. It deliberately publishes NO ports:
+# ports are added by docker-compose.override.yml for local development (picked
+# up automatically) and by docker-compose.prod.yml for a server.
+#
+# Compose *appends* port lists when files are merged, so a port declared here
+# could not be taken back in an override — which is why it must stay out.
+
 services:
   mosquitto:
     image: eclipse-mosquitto:2
     volumes:
       - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
-    ports:
-      - "1883:1883"
 
   db:
     image: postgres:16-alpine
     environment:
       POSTGRES_USER: mes
-      POSTGRES_PASSWORD: mes
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mes}
       POSTGRES_DB: mes
     volumes:
       - ./pgdata:/var/lib/postgresql/data
@@ -25,15 +30,13 @@ services:
     environment:
       MQTT_HOST: mosquitto
       MQTT_PORT: 1883
-      DATABASE_URL: postgresql+psycopg2://mes:mes@db:5432/mes
+      DATABASE_URL: postgresql+psycopg2://mes:${POSTGRES_PASSWORD:-mes}@db:5432/mes
       MACHINE_ID: line1
     depends_on:
       mosquitto:
         condition: service_started
       db:
         condition: service_healthy
-    ports:
-      - "8000:8000"
 
   emulator:
     build: ./emulator
@@ -48,7 +51,5 @@ services:
 
   frontend:
     build: ./frontend
-    ports:
-      - "5173:80"
     depends_on:
       - backend

@@ -1,0 +1,22 @@
+# Local development. Compose picks this file up automatically, so
+# `docker compose up --build` exposes everything needed to poke at the stack:
+#
+#   dashboard  http://localhost:5173
+#   API/docs   http://localhost:8000/docs
+#   MQTT       localhost:1883   (handy for mosquitto_sub while debugging)
+#
+# None of this is used on a server — see docker-compose.prod.yml, which
+# publishes port 80 only.
+
+services:
+  mosquitto:
+    ports:
+      - "1883:1883"
+
+  backend:
+    ports:
+      - "8000:8000"
+
+  frontend:
+    ports:
+      - "5173:80"

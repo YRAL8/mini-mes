@@ -1,21 +1,30 @@
-# Production deployment (e.g. a small cloud VM).
-# Usage:  docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+# Production deployment on a small cloud VM:
 #
-# Only the dashboard (80) and the backend API/WebSocket (8000) are published.
-# MQTT (1883) and PostgreSQL (5432) stay on the internal network — not exposed.
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+#
+# Note the explicit -f list: it excludes docker-compose.override.yml, so none of
+# the development ports come along. Port 80 is the only port published. The API
+# and the WebSocket are served through the dashboard's nginx
+# (see frontend/nginx.conf), so FastAPI is never exposed directly, and MQTT and
+# PostgreSQL stay on the internal Docker network.
+#
+# Requires a .env file next to this one holding POSTGRES_PASSWORD.
+# A published Docker port bypasses ufw, so the host firewall is not what keeps
+# the other ports closed — the provider-side cloud firewall is.
 
 services:
   mosquitto:
     restart: unless-stopped
-    ports: []          # do not publish MQTT to the internet
 
   db:
     restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
 
   backend:
     restart: unless-stopped
-    ports:
-      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+psycopg2://mes:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@db:5432/mes
 
   emulator:
     restart: unless-stopped
@@ -24,3 +33,8 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
