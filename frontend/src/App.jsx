@@ -11,9 +11,11 @@ const STATUS_META = {
   error: { label: "STÖRUNG", color: "#E15B4F", glow: "rgba(225,91,79,0.35)" },
 };
 
+// Same origin by default: nginx proxies /ws to the backend, so the dashboard
+// works behind a reverse proxy and needs no extra port opened to the internet.
 const WS_URL =
   import.meta.env.VITE_WS_URL ||
-  `ws://${window.location.hostname}:8000/ws`;
+  `${window.location.protocol === "https:" ? "wss" : "ws"}://${window.location.host}/ws`;
 
 function fmtTime(iso) {
   if (!iso) return "--:--:--";
